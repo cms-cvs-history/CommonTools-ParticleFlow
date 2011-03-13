@@ -107,14 +107,10 @@ PFPileUp::chargedHadronVertex( const Handle<VertexCollection>& vertices, const P
   
   reco::TrackBaseRef trackBaseRef( pfcand.trackRef() );
   
-  unsigned nFoundVertex = 0;
   size_t  iVertex = 0;
   unsigned index=0;
   typedef reco::VertexCollection::const_iterator IV;
   for(IV iv=vertices->begin(); iv!=vertices->end(); ++iv, ++index) {
-//     cout<<(*iv).x()<<" "
-// 	<<(*iv).y()<<" "
-// 	<<(*iv).z()<<endl;
 
     const reco::Vertex& vtx = *iv;
     
@@ -129,18 +125,11 @@ PFPileUp::chargedHadronVertex( const Handle<VertexCollection>& vertices, const P
       // one of the tracks in the vertex is the same as 
       // the track considered in the function
       if(baseRef == trackBaseRef ) {
-	iVertex = index;
-	nFoundVertex++;
+	return VertexRef( vertices, iVertex);
       }	 	
     }
   } 
 
-  if( nFoundVertex == 1) {
-    return VertexRef( vertices, iVertex);
-  }
-  else if(nFoundVertex>1) assert(false);
-
-  assert( !iVertex );
 
   // no vertex found with this track. 
   // as a secondary solution, associate the closest vertex in z
