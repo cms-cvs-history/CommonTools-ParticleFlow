@@ -107,14 +107,12 @@ PFPileUp::chargedHadronVertex( const Handle<VertexCollection>& vertices, const P
   
   reco::TrackBaseRef trackBaseRef( pfcand.trackRef() );
   
-  unsigned nFoundVertex = 0;
   size_t  iVertex = 0;
   unsigned index=0;
+  unsigned nFoundVertex = 0;
   typedef reco::VertexCollection::const_iterator IV;
+  float bestweight=0;
   for(IV iv=vertices->begin(); iv!=vertices->end(); ++iv, ++index) {
-//     cout<<(*iv).x()<<" "
-// 	<<(*iv).y()<<" "
-// 	<<(*iv).z()<<endl;
 
     const reco::Vertex& vtx = *iv;
     
@@ -128,20 +126,23 @@ PFPileUp::chargedHadronVertex( const Handle<VertexCollection>& vertices, const P
 
       // one of the tracks in the vertex is the same as 
       // the track considered in the function
+      float w = vtx.trackWeight(baseRef);
       if(baseRef == trackBaseRef ) {
-	iVertex = index;
-	nFoundVertex++;
-      }	 	
+	//select the vertex for which the track has the highest weight
+	if (w > bestweight){
+	  bestweight=w;
+	  iVertex=index;
+	  nFoundVertex++;
+	}	 	
+      }
     }
-  } 
+  }
 
-  if( nFoundVertex == 1) {
+  if (nFoundVertex>0){
+    if (nFoundVertex!=1)
+      edm::LogWarning("TrackOnTwoVertex")<<"a track is shared by at least two verteces. Used to be an assert";
     return VertexRef( vertices, iVertex);
   }
-  else if(nFoundVertex>1) assert(false);
-
-  assert( !iVertex );
-
   // no vertex found with this track. 
   // as a secondary solution, associate the closest vertex in z
 
@@ -161,8 +162,8 @@ PFPileUp::chargedHadronVertex( const Handle<VertexCollection>& vertices, const P
 
   if( foundVertex ) 
     return VertexRef( vertices, iVertex);  
-  else 
-    return VertexRef();
+
+  return VertexRef();
 }
 
 
