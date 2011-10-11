@@ -6,7 +6,7 @@ process = cms.Process("PF2PAT")
 
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(100)
 )
 
 
@@ -43,7 +43,7 @@ process.load("CommonTools.ParticleFlow.PF2PAT_cff")
 from CommonTools.ParticleFlow.Tools.enablePileUpCorrection import enablePileUpCorrectionInPF2PAT
 
 # the following is advocated by JetMET, but leads to include very far tracks in the no pile up collection
-# enablePileUpCorrectionInPF2PAT( process, postfix='')
+enablePileUpCorrectionInPF2PAT( process, postfix='')
 
 process.dump = cms.EDAnalyzer("EventContentAnalyzer")
 

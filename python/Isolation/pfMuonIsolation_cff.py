@@ -9,11 +9,19 @@ from  CommonTools.ParticleFlow.Isolation.muonPFIsolation_cff import *
 # computing the isolation for the muons produced by PF2PAT, and not for reco muons
 sourceMuons = 'pfSelectedMuons'
 
+
+
 muPFIsoDepositCharged.src = sourceMuons
 muPFIsoDepositChargedAll.src = sourceMuons
 muPFIsoDepositNeutral.src = sourceMuons
 muPFIsoDepositGamma.src = sourceMuons
 muPFIsoDepositPU.src = sourceMuons
+
+# muPFIsoDepositCharged.ExtractorPSet.inputCandView = 'pfAllChargedHadronsIso'
+# muPFIsoDepositChargedAll.ExtractorPSet.inputCandView = 'pfAllChargedParticlesIso'
+# muPFIsoDepositNeutral.ExtractorPSet.inputCandView = 'pfAllNeutralHadronsIso'
+# muPFIsoDepositGamma.ExtractorPSet.inputCandView = 'pfAllPhotonsIso'
+# muPFIsoDepositPU.ExtractorPSet.inputCandView = 'pfPileUpAllChargedParticlesIso'
 
 pfMuonIsolationSequence = cms.Sequence(
     muonPFIsolationSequence 

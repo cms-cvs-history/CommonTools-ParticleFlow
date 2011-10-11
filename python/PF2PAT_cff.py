@@ -2,6 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 from CommonTools.ParticleFlow.pfMET_cfi  import *
 from CommonTools.ParticleFlow.pfParticleSelection_cff import *
+# from CommonTools.ParticleFlow.pfParticleSelectionIso_cff import *
+from CommonTools.ParticleFlow.pfNoPileUp_cff  import *
 from CommonTools.ParticleFlow.pfPhotons_cff import *
 from CommonTools.ParticleFlow.pfElectrons_cff import *
 from CommonTools.ParticleFlow.pfMuons_cff import *
@@ -23,7 +25,8 @@ pfPileUp.PFCandidates = 'particleFlow'
 pfNoPileUp.bottomCollection = 'particleFlow'
 
 PF2PAT = cms.Sequence(
-    pfParticleSelectionSequence + 
+    pfNoPileUpSequence + 
+    pfParticleSelectionSequence +
     pfPhotonSequence +
     pfMuonSequence + 
     pfNoMuon +
