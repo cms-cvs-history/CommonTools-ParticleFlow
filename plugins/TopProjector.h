@@ -136,6 +136,7 @@ void TopProjector< Top, Bottom >::produce(edm::Event& iEvent,
 /*     throw cms::Exception( "MissingProduct", err.str()); */
 /*   } */
 
+  edm::ProductID topsID = tops.id();
 
   
 
@@ -151,6 +152,8 @@ void TopProjector< Top, Bottom >::produce(edm::Event& iEvent,
 /*     edm::LogError("PFPAT")<<err.str(); */
 /*     throw cms::Exception( "MissingProduct", err.str()); */
 /*   } */
+
+  edm::ProductID bottomsID = bottoms.id();
 
  
   if(verbose_) {
