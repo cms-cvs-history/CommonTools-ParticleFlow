@@ -34,7 +34,7 @@ elPFIsoValueGamma03 = cms.EDProducer("CandIsolatorFromDeposits",
             src = cms.InputTag("elPFIsoDepositGamma"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('Threshold(0.0)'),
             skipDefaultVeto = cms.bool(True),
             mode = cms.string('sum')
       )
@@ -47,7 +47,7 @@ elPFIsoValueNeutral03 = cms.EDProducer("CandIsolatorFromDeposits",
             src = cms.InputTag("elPFIsoDepositNeutral"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('Threshold(0.0)'),
             skipDefaultVeto = cms.bool(True),
             mode = cms.string('sum')
     )
@@ -60,7 +60,7 @@ elPFIsoValuePU03 = cms.EDProducer("CandIsolatorFromDeposits",
             src = cms.InputTag("elPFIsoDepositPU"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('Threshold(0.0)'),
             skipDefaultVeto = cms.bool(True),
             mode = cms.string('sum')
       )
@@ -104,7 +104,7 @@ elPFIsoValueGamma04 = cms.EDProducer("CandIsolatorFromDeposits",
             src = cms.InputTag("elPFIsoDepositGamma"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('Threshold(0.0)'),
             skipDefaultVeto = cms.bool(True),
             mode = cms.string('sum')
       )
@@ -118,7 +118,7 @@ elPFIsoValueNeutral04 = cms.EDProducer("CandIsolatorFromDeposits",
             src = cms.InputTag("elPFIsoDepositNeutral"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('Threshold(0.0)'),
             skipDefaultVeto = cms.bool(True),
             mode = cms.string('sum')
     )
@@ -131,7 +131,7 @@ elPFIsoValuePU04 = cms.EDProducer("CandIsolatorFromDeposits",
             src = cms.InputTag("elPFIsoDepositPU"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('Threshold(0.0)'),
             skipDefaultVeto = cms.bool(True),
             mode = cms.string('sum')
       )
