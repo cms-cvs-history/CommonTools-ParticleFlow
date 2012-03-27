@@ -5,7 +5,7 @@ process = cms.Process("PFISO")
 
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(10)
 )
  
 process.source = cms.Source("PoolSource",
@@ -26,12 +26,30 @@ from CommonTools.ParticleFlow.Tools.pfIsolation import setupPFElectronIso, setup
 process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons')
 process.muIsoSequence = setupPFMuonIso(process, 'muons')
 
+process.TFileService = cms.Service("TFileService", fileName = cms.string("histo.root") )
+
+process.elePFIsoReader = cms.EDAnalyzer("PFIsoReaderDemo",
+                                        Electrons = cms.InputTag('gsfElectrons'),
+                                        PFCandidateMap = cms.InputTag('particleFlow:electrons'),
+                                        IsoDepElectron = cms.VInputTag(cms.InputTag('elPFIsoDepositChargedPFIso'),
+                                                                       cms.InputTag('elPFIsoDepositGammaPFIso'),
+                                                                       cms.InputTag('elPFIsoDepositNeutralPFIso')),
+                                        IsoValElectronPF = cms.VInputTag(cms.InputTag('elPFIsoValueCharged03PFIdPFIso'),
+                                                                         cms.InputTag('elPFIsoValueGamma03PFIdPFIso'),
+                                                                         cms.InputTag('elPFIsoValueNeutral03PFIdPFIso')),
+                                        IsoValElectronNoPF = cms.VInputTag(cms.InputTag('elPFIsoValueCharged03NoPFIdPFIso'),
+                                                                           cms.InputTag('elPFIsoValueGamma03NoPFIdPFIso'),
+                                                                           cms.InputTag('elPFIsoValueNeutral03NoPFIdPFIso'))
+                                        )
+
 process.p = cms.Path(
     # process.pfNoPileUpSequence +
     process.pfParticleSelectionSequence + 
     process.eleIsoSequence + 
-    process.muIsoSequence
+    process.muIsoSequence+
+    process.elePFIsoReader
     )
+
 
 # output ------------------------------------------------------------
 
