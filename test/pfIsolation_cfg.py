@@ -5,13 +5,12 @@ process = cms.Process("PFISO")
 
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(-1)
 )
  
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
     '/store/relval/CMSSW_4_2_6/RelValTTbar/GEN-SIM-RECO/START42_V12-v1/0006/12A43774-08A9-E011-AFDC-00248C0BE01E.root'
-    
     ))
    
 
@@ -26,12 +25,29 @@ from CommonTools.ParticleFlow.Tools.pfIsolation import setupPFElectronIso, setup
 process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons')
 process.muIsoSequence = setupPFMuonIso(process, 'muons')
 
+process.TFileService = cms.Service("TFileService", fileName = cms.string("histo.root") )
+
+process.elePFIsoReader = cms.EDAnalyzer("PFIsoReaderDemo",
+                                        Electrons = cms.InputTag('gsfElectrons'),
+                                        IsoDepElectron = cms.VInputTag(cms.InputTag('elPFIsoDepositChargedPFIso'),
+                                                                       cms.InputTag('elPFIsoDepositGammaPFIso'),
+                                                                       cms.InputTag('elPFIsoDepositNeutralPFIso')),
+                                        IsoValElectronPF = cms.VInputTag(cms.InputTag('elPFIsoValueCharged03PFIdPFIso'),
+                                                                         cms.InputTag('elPFIsoValueGamma03PFIdPFIso'),
+                                                                         cms.InputTag('elPFIsoValueNeutral03PFIdPFIso')),
+                                        IsoValElectronNoPF = cms.VInputTag(cms.InputTag('elPFIsoValueCharged03NoPFIdPFIso'),
+                                                                           cms.InputTag('elPFIsoValueGamma03NoPFIdPFIso'),
+                                                                           cms.InputTag('elPFIsoValueNeutral03NoPFIdPFIso'))
+                                        )
+
 process.p = cms.Path(
     # process.pfNoPileUpSequence +
     process.pfParticleSelectionSequence + 
     process.eleIsoSequence + 
-    process.muIsoSequence
+    process.muIsoSequence+
+    process.elePFIsoReader
     )
+
 
 # output ------------------------------------------------------------
 
@@ -41,7 +57,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 )
 
 process.outpath = cms.EndPath(
-    process.out 
+#    process.out 
     )
 
 
