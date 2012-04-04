@@ -83,9 +83,6 @@ def setupPFElectronIso(process, electronCollection, postfix='PFIso' ):
 
     Calls setupPFIso.
     '''
-    print 'WARNING!!! the vetoes are the ones defined for the PF e-s (no veto...).'
-    print 'Vetoes should be applied in the endcaps when doing particle-based isolation on gsfElectrons.'
-    print 'Need a volunteer to implement that.'
     return setupPFIso( process, electronCollection, 'Electron', postfix)
 
     
