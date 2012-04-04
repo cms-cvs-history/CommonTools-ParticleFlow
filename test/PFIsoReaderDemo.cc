@@ -13,7 +13,9 @@ PFIsoReaderDemo::PFIsoReaderDemo(const edm::ParameterSet& iConfig)
 {
   inputTagGsfElectrons_ = iConfig.getParameter<edm::InputTag>("Electrons");
   inputTagIsoDepElectrons_ = iConfig.getParameter< std::vector<edm::InputTag> >("IsoDepElectron");
-  inputTagIsoValElectronsNoPFId_ = iConfig.getParameter< std::vector<edm::InputTag> >("IsoValElectronNoPF");
+
+  // No longer needed. e/g recommendation (04/04/12)
+  //  inputTagIsoValElectronsNoPFId_ = iConfig.getParameter< std::vector<edm::InputTag> >("IsoValElectronNoPF");
   inputTagIsoValElectronsPFId_   = iConfig.getParameter< std::vector<edm::InputTag> >("IsoValElectronPF");   
 
   // Control plots
@@ -56,29 +58,39 @@ void PFIsoReaderDemo::analyze(const edm::Event & iEvent,const edm::EventSetup & 
   }
 
   IsoDepositVals electronIsoValPFId(nTypes);
-  IsoDepositVals electronIsoValNoPFId(nTypes);
+
+  // No longer needed. e/g recommendation (04/04/12)
+  //  IsoDepositVals electronIsoValNoPFId(nTypes);
 
   for (size_t j = 0; j<inputTagIsoValElectronsPFId_.size(); ++j) {
     iEvent.getByLabel(inputTagIsoValElectronsPFId_[j], electronIsoValPFId[j]);
   }
-  for (size_t j = 0; j<inputTagIsoValElectronsPFId_.size(); ++j) {
-    iEvent.getByLabel(inputTagIsoValElectronsNoPFId_[j], electronIsoValNoPFId[j]);
-  }
+
+  // No longer needed. e/g recommendation (04/04/12)
+//  for (size_t j = 0; j<inputTagIsoValElectronsPFId_.size(); ++j) {
+//    iEvent.getByLabel(inputTagIsoValElectronsNoPFId_[j], electronIsoValNoPFId[j]);
+//  }
   // Electrons - from reco 
   unsigned nele=gsfElectronH->size();
-  std::cout<<"Electron: "<<nele<<std::endl;
+
   for(unsigned iele=0; iele<nele;++iele) {
     reco::GsfElectronRef myElectronRef(gsfElectronH,iele);
-    
-    unsigned pfId=(myElectronRef->passingMvaPreselection()) ? 1 : 0 ;
 
-    const IsoDepositVals * electronIsoVals =  (pfId) ? &electronIsoValPFId : &electronIsoValNoPFId ;
+    //    No longer needed. e/g recommendation (04/04/12)
+    //    unsigned pfId=(myElectronRef->passingMvaPreselection()) ? 1 : 0 ;
+    // const IsoDepositVals * electronIsoVals =  (pfId) ? &electronIsoValPFId : &electronIsoValNoPFId ;
+
+    const IsoDepositVals * electronIsoVals = &electronIsoValPFId;
+
     double charged =  (*(*electronIsoVals)[0])[myElectronRef];
     double photon = (*(*electronIsoVals)[1])[myElectronRef];
     double neutral = (*(*electronIsoVals)[2])[myElectronRef];
-    std::cout << " Charged Iso " << charged << std::endl;
-    std::cout << " Photon Iso " <<  photon << std::endl;
-    std::cout << " Neutral Hadron Iso " << neutral << std::endl;
+
+    std::cout << " run " << iEvent.id().run() << " lumi " << iEvent.id().luminosityBlock() << " event " << iEvent.id().event();
+    std::cout << " pt " <<  myElectronRef->pt() << " eta " << myElectronRef->eta() << " phi " << myElectronRef->phi() << " charge " << myElectronRef->charge()<< " : ";
+    std::cout << " ChargedIso " << charged ;
+    std::cout << " PhotonIso " <<  photon ;
+    std::cout << " NeutralHadron Iso " << neutral << std::endl;
     
     if(myElectronRef->isEB()) {
       chargedBarrel_ ->Fill(charged/myElectronRef->pt());
