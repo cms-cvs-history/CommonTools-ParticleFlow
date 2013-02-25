@@ -33,15 +33,13 @@
 #include <iostream>
 
 
-template< class Top, class Bottom>
+template< class Top, class Bottom, class TopCollection = std::vector<Top>, class BottomCollection = std::vector<Bottom> >
 class TopProjector : public edm::EDProducer {
 
  public:
 
-  typedef std::vector<Top> TopCollection;
-  typedef edm::Handle< std::vector<Top> > TopHandle;
-  typedef std::vector<Bottom> BottomCollection;
-  typedef edm::Handle< std::vector<Bottom> > BottomHandle;
+  typedef edm::Handle<TopCollection> TopHandle;
+  typedef edm::Handle<BottomCollection> BottomHandle;
   typedef edm::Ptr<Bottom> BottomPtr; 
 
   TopProjector(const edm::ParameterSet&);
@@ -70,14 +68,14 @@ class TopProjector : public edm::EDProducer {
 		      std::vector<bool>& masked ) const;
     
   
-  void processCollection( const edm::Handle< std::vector<Top> >& handle,
-			  const edm::Handle< std::vector<Bottom> >& allPFCandidates ,
+  void processCollection( const TopHandle& handle,
+			  const BottomHandle& allPFCandidates ,
 			  std::vector<bool>& masked,
 			  const char* objectName,
 			  const edm::Event& iEvent ) const; 
 
   void  printAncestors( const reco::CandidatePtrVector& ancestors,
-			const edm::Handle< std::vector<Bottom> >& allPFCandidates ) const;
+			const BottomHandle& allPFCandidates ) const;
 
 
   /// enable? if not, all candidates in the bottom collection are copied to the output collection
@@ -99,8 +97,8 @@ class TopProjector : public edm::EDProducer {
 
 
 
-template< class Top, class Bottom>
-TopProjector< Top, Bottom >::TopProjector(const edm::ParameterSet& iConfig) : 
+template< class Top, class Bottom, class TopCollection, class BottomCollection > 
+TopProjector< Top, Bottom, TopCollection, BottomCollection >::TopProjector(const edm::ParameterSet& iConfig) : 
   enable_(iConfig.getParameter<bool>("enable")) {
 
   verbose_ = iConfig.getUntrackedParameter<bool>("verbose",false);
@@ -110,13 +108,13 @@ TopProjector< Top, Bottom >::TopProjector(const edm::ParameterSet& iConfig) :
 
   // will produce a collection of the unmasked candidates in the 
   // bottom collection 
-  produces< std::vector<Bottom> >();
+  produces< BottomCollection >();
 }
 
 
-template< class Top, class Bottom >
-void TopProjector< Top, Bottom >::produce(edm::Event& iEvent,
-					  const edm::EventSetup& iSetup) {
+template< class Top, class Bottom, class TopCollection, class BottomCollection > 
+void TopProjector< Top, Bottom, TopCollection, BottomCollection >::produce(edm::Event& iEvent,
+									   const edm::EventSetup& iSetup) {
   
   if( verbose_)
     std::cout<<"Event -------------------- "<<iEvent.id().event()<<std::endl;
@@ -208,15 +206,15 @@ void TopProjector< Top, Bottom >::produce(edm::Event& iEvent,
 
 
 
-template< class Top, class Bottom > 
-void TopProjector< Top, Bottom >::processCollection( const edm::Handle< std::vector<Top> >& tops,
-						     const edm::Handle< std::vector<Bottom> >& bottoms ,
-						     std::vector<bool>& masked,
-						     const char* objectName,
-						     const edm::Event& iEvent) const {
+template< class Top, class Bottom, class TopCollection, class BottomCollection > 
+void TopProjector< Top, Bottom, TopCollection, BottomCollection >::processCollection( const TopHandle& tops,
+										      const BottomHandle& bottoms,
+										      std::vector<bool>& masked,
+										      const char* objectName,
+										      const edm::Event& iEvent) const {
 
   if( tops.isValid() && bottoms.isValid() ) {
-    const std::vector<Top>& topCollection = *tops;
+    const TopCollection& topCollection = *tops;
     
     if(verbose_) 
       std::cout<<"******* TopProjector "<<objectName
@@ -253,12 +251,12 @@ void TopProjector< Top, Bottom >::processCollection( const edm::Handle< std::vec
 }
 
 
-template< class Top, class Bottom >
-void  TopProjector<Top,Bottom>::printAncestors( const reco::CandidatePtrVector& ancestors,
-				      const edm::Handle< std::vector<Bottom> >& allPFCandidates ) const {
+template< class Top, class Bottom, class TopCollection, class BottomCollection >
+void  TopProjector< Top, Bottom, TopCollection, BottomCollection >::printAncestors( const reco::CandidatePtrVector& ancestors,
+										    const BottomHandle& allPFCandidates ) const {
   
 
-  std::vector<Bottom> pfs = *allPFCandidates;
+  BottomCollection pfs = *allPFCandidates;
 
   for(unsigned i=0; i<ancestors.size(); i++) {
 
@@ -274,12 +272,12 @@ void  TopProjector<Top,Bottom>::printAncestors( const reco::CandidatePtrVector& 
 
 
 
-template< class Top, class Bottom >
+template< class Top, class Bottom, class TopCollection, class BottomCollection >
 void
-TopProjector<Top,Bottom>::ptrToAncestor( reco::CandidatePtr candPtr,
-					 reco::CandidatePtrVector& ancestors,
-					 const edm::ProductID& ancestorsID,
-					 const edm::Event& iEvent) const {
+TopProjector< Top, Bottom, TopCollection, BottomCollection >::ptrToAncestor( reco::CandidatePtr candPtr,
+									     reco::CandidatePtrVector& ancestors,
+									     const edm::ProductID& ancestorsID,
+									     const edm::Event& iEvent) const {
 
   
   unsigned nSources = candPtr->numberOfSourceCandidatePtrs();
@@ -311,12 +309,9 @@ TopProjector<Top,Bottom>::ptrToAncestor( reco::CandidatePtr candPtr,
   }
 }
 
-
-
-
-template< class Top, class Bottom >
-void TopProjector<Top,Bottom>::maskAncestors( const reco::CandidatePtrVector& ancestors,
-					 std::vector<bool>& masked ) const {
+template< class Top, class Bottom, class TopCollection, class BottomCollection >
+void TopProjector< Top, Bottom, TopCollection, BottomCollection >::maskAncestors( const reco::CandidatePtrVector& ancestors,
+										  std::vector<bool>& masked ) const {
   
   for(unsigned i=0; i<ancestors.size(); i++) {
     unsigned index = ancestors[i].key();
@@ -329,6 +324,5 @@ void TopProjector<Top,Bottom>::maskAncestors( const reco::CandidatePtrVector& an
     masked[index] = true;
   }
 }
-
 
 #endif
